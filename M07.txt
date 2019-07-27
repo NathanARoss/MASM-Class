@@ -1,0 +1,93 @@
+; M07.txt
+; Nathan Ross
+
+;******************************************
+; NOTE: use "test char, 0" to set zflag to 1
+;******************************************
+
+
+;******************************************
+; set zero flag if islower is true
+;******************************************
+
+islower		MACRO	char			;islower
+		local	islower1, islower2
+
+		cmp	char, 'a'		; IF char >= 'a' and char <= 'z'
+		jnae	islower1
+		cmp	char, 'z'
+		jnbe	islower1
+		test	char, 0			;   THEN zFlag = 1
+		jmp	islower2
+islower1:					;   ELSE zFlag = 0
+islower2:					; ENDIF
+		ENDM
+
+
+;******************************************
+; set zero flag if isupper is true
+;******************************************
+
+isupper		MACRO	char			;isupper
+		local	isupper1, isupper2
+
+		cmp	char, 'A'		; IF char >= 'A' and char <= 'Z'
+		jnae	isupper1
+		cmp	char, 'Z'
+		jnbe	isupper1
+		test	char, 0			;   THEN zFlag = 1
+		jmp	isupper2
+isupper1:					;   ELSE zFlag = 0
+isupper2:					; ENDIF
+		ENDM
+
+
+;******************************************
+; set zero flag if isalpha is true
+;******************************************
+
+isalpha		MACRO	char			;isalpha
+		local	isalpha1, isalpha2, isalpha3
+
+		islower	char			; IF islower (char)
+		je	isalpha1
+		isupper	char			;   OR isupper (char)
+		je	isalpha1	
+		jmp	isalpha2
+isalpha1:	test	char, 0			;     THEN zFlag = 1
+		jmp	isalpha3
+isalpha2:					;     ELSE zFlag = 0
+isalpha3:					; ENDIF
+		ENDM
+
+
+toupper		MACRO	char			;toupper
+
+		and	char, 11011111B		; char = toupper(char)
+		ENDM
+
+
+tolower		MACRO	char			;tolower
+
+		or	char, 00100000B		; char = tolower(char)
+		ENDM
+
+;******************************************
+; set zero flag if isWSpace is true
+;******************************************
+
+isWSpace	MACRO	char		;isWSpace
+		local	isalpha1, isalpha2, isalpha3
+
+		cmp	char, ' '		; IF char == SPACE
+		je	isWSpace1
+		cmp	char, 9			; OR char == HORIZONTAL_TAB
+		je	isWSpace1	
+		cmp	char, 11		; OR char == VERTICAL_TAB
+		je	isWSpace1	
+		jmp	isWSpace2
+isWSpace1:	test	char, 0			;     THEN zFlag = 1
+		jmp	isWSpace3
+isWSpace2:					;     ELSE zFlag = 0
+isWSpace3:					; ENDIF
+		ENDM
